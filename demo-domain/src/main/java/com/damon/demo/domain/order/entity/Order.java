@@ -1,9 +1,9 @@
 package com.damon.demo.domain.order.entity;
 
-import com.damon.tcc.BizId;
 import com.damon.demo.common.domain.AggregateRoot;
 import com.damon.demo.common.exception.BusinessException;
 import com.damon.demo.domain.order.OrderMoneyCalcuateDomainService;
+import com.damon.tcc.BizId;
 import lombok.Data;
 import lombok.ToString;
 

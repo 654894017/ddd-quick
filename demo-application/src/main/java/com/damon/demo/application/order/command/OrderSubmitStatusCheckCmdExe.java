@@ -1,6 +1,5 @@
 package com.damon.demo.application.order.command;
 
-import com.damon.object_trace.Aggregate;
 import com.damon.demo.domain.gateway.coupon.ICouponGateway;
 import com.damon.demo.domain.gateway.inventory.IInventoryGateway;
 import com.damon.demo.domain.gateway.point.IPointGateway;
@@ -9,6 +8,7 @@ import com.damon.demo.domain.order.IOrderGateway;
 import com.damon.demo.domain.order.entity.Order;
 import com.damon.demo.domain.order.entity.OrderId;
 import com.damon.demo.domain.order.entity.OrderLog;
+import com.damon.object_trace.Aggregate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
