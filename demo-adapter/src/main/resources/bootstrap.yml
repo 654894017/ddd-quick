@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: ddd-quick-demo
+  profiles:
+    active: dev
+  jackson:
+    property-naming-strategy: SNAKE_CASE
