@@ -137,7 +137,7 @@ public class OrderGateway implements IOrderGateway {
         wrapper.eq("id", newOrder.getId());
         int result = orderMapper.update(null, wrapper);
         if (result != 1) {
-            throw new OptimisticLockException(String.format("Update order (%s) error, it's not found or changed by another user",
+            throw new OptimisticLockException(String.format("Update order (%s) error, it's not found or changed by another order",
                     newOrder.getId()));
         }
     }

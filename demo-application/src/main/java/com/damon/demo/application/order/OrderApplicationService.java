@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 public class OrderApplicationService implements IOrderApplicationService {
 
     private final OrderSubmitCmdExe orderSubmitCmdExe;
-
     @Override
     public OrderSubmitRespDTO submitOrder(OrderSubmitCmd cmd) {
         return orderSubmitCmdExe.execute(cmd);

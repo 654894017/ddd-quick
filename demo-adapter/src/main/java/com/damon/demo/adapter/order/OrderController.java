@@ -1,4 +1,4 @@
-package com.damon.demo.adapter.user;
+package com.damon.demo.adapter.order;
 
 import com.damon.demo.client.api.order.IOrderApplicationService;
 import lombok.RequiredArgsConstructor;
