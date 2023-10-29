@@ -18,10 +18,6 @@
             <artifactId>commons-validator</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.meixuesong</groupId>
-            <artifactId>aggregate-persistence</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>
@@ -32,17 +28,10 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.30</version>
         </dependency>
         <dependency>
             <groupId>org.example</groupId>
             <artifactId>demo-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>7.1.0</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.damon</groupId>
