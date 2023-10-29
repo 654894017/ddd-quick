@@ -2,7 +2,6 @@ package com.damon.demo.application.order.command;
 
 import com.damon.demo.domain.gateway.inventory.IInventoryGateway;
 import com.damon.demo.domain.order.entity.OrderId;
-import com.damon.demo.domain.order.entity.OrderLog;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
