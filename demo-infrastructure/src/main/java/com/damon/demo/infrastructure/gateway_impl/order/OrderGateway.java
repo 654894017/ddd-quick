@@ -2,7 +2,7 @@ package com.damon.demo.infrastructure.gateway_impl.order;
 
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.damon.demo.common.exception.OptimisticLockException;
+import com.damon.demo.domain.exception.OptimisticLockException;
 import com.damon.demo.domain.order.IOrderGateway;
 import com.damon.demo.domain.order.entity.Consignee;
 import com.damon.demo.domain.order.entity.Order;

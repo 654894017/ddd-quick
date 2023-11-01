@@ -1,10 +1,10 @@
 package com.damon.demo.domain.gateway.inventory;
 
-import com.damon.demo.common.exception.TechnicalException;
+import com.damon.demo.domain.exception.BusinessException;
 
 import java.util.Set;
 
-public class GoodsSoldoutException extends TechnicalException {
+public class GoodsSoldoutException extends BusinessException {
     private Set<Long> soldoutGoodsIds;
 
     public GoodsSoldoutException(String message, Set<Long> soldoutGoodsIds) {

@@ -1,10 +1,10 @@
 package com.damon.demo.domain.gateway.inventory;
 
-import com.damon.demo.common.exception.TechnicalException;
+import com.damon.demo.domain.exception.BusinessException;
 
 import java.util.Set;
 
-public class InventoryDeficiencyException extends TechnicalException {
+public class InventoryDeficiencyException extends BusinessException {
     private Set<Long> inventoryDeficiencyGoodsIds;
 
     public InventoryDeficiencyException(String message, Set<Long> inventoryDeficiencyGoodsIds) {

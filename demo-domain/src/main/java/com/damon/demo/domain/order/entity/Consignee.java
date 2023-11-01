@@ -1,7 +1,7 @@
 package com.damon.demo.domain.order.entity;
 
 import cn.hutool.core.util.PhoneUtil;
-import com.damon.demo.common.domain.ValueObject;
+import com.damon.demo.domain.base_type.domain.ValueObject;
 import lombok.Data;
 import lombok.NonNull;
 

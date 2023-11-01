@@ -1,6 +1,6 @@
 package com.damon.demo.domain.order.entity;
 
-import com.damon.demo.common.domain.Entity;
+import com.damon.demo.domain.base_type.domain.Entity;
 import lombok.Data;
 
 @Data

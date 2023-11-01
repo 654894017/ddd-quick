@@ -1,6 +1,6 @@
 package com.damon.demo.domain.order;
 
-import com.damon.demo.common.exception.BusinessException;
+import com.damon.demo.domain.exception.BusinessException;
 import com.damon.demo.domain.gateway.coupon.CouponDTO;
 import com.damon.demo.domain.gateway.coupon.ICouponGateway;
 import com.damon.demo.domain.gateway.point.IPointGateway;

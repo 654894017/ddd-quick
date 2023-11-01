@@ -1,7 +1,7 @@
 package com.damon.demo.application.order;
 
 import com.damon.demo.client.api.order.dto.OrderSubmitCmd;
-import com.damon.demo.common.exception.BusinessException;
+import com.damon.demo.domain.exception.BusinessException;
 import com.damon.demo.domain.gateway.customer.ConsigneeInfoDTO;
 import com.damon.demo.domain.gateway.customer.ICustomerGateway;
 import com.damon.demo.domain.gateway.goods.GoodsBasicInfoDTO;

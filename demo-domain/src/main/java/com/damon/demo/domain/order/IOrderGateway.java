@@ -1,6 +1,6 @@
 package com.damon.demo.domain.order;
 
-import com.damon.demo.common.exception.OptimisticLockException;
+import com.damon.demo.domain.exception.OptimisticLockException;
 import com.damon.demo.domain.order.entity.Order;
 import com.damon.demo.domain.order.entity.OrderId;
 import com.damon.object_trace.Aggregate;

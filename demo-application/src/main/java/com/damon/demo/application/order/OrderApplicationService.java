@@ -22,7 +22,7 @@ public class OrderApplicationService implements IOrderApplicationService {
 
     @Override
     public void checkOrderSubmitStatus() {
-        orderSubmitCmdExe.checkTrasactionStatus();
+        orderSubmitCmdExe.executeOrderStatusCheck();
     }
 
 

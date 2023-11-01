@@ -1,4 +1,4 @@
-package com.damon.demo.common.domain;
+package com.damon.demo.domain.base_type.domain;
 
 
 import com.damon.object_trace.Version;

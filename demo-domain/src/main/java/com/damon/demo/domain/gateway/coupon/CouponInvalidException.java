@@ -1,8 +1,8 @@
 package com.damon.demo.domain.gateway.coupon;
 
-import com.damon.demo.common.exception.TechnicalException;
+import com.damon.demo.domain.exception.BusinessException;
 
-public class CouponInvalidException extends TechnicalException {
+public class CouponInvalidException extends BusinessException {
     private Long couponId;
 
     public CouponInvalidException(String message, Long couponId) {

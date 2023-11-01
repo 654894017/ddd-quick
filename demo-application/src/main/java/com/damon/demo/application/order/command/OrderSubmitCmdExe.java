@@ -19,12 +19,9 @@ import com.damon.demo.domain.order.entity.OrderId;
 import com.damon.object_trace.Aggregate;
 import com.damon.object_trace.AggregateFactory;
 import com.damon.tcc.TccConfig;
-import com.damon.tcc.TccFailedLogIterator;
 import com.damon.tcc.TccTemplateService;
-import com.damon.tcc.log.TccLog;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -56,21 +53,11 @@ public class OrderSubmitCmdExe extends TccTemplateService<Long, Order> {
         this.orderGateway = orderGateway;
     }
 
-    @Override
-    public void checkTrasactionStatus() {
-        TccFailedLogIterator iterator = super.queryFailedLogs(5, 100);
-        while (iterator.hasNext()) {
-            List<TccLog> tccLogs = iterator.next();
-            tccLogs.forEach(tccLog -> {
-                Aggregate<Order> orderAggregate = orderGateway.get(new OrderId(tccLog.getBizId()));
-                Order order = orderAggregate.getRoot();
-                if (order == null) {
-                    log.error("找不到对应的订单信息, 订单id :{}", order.getId());
-                    return;
-                }
-                super.check(order);
-            });
-        }
+    public void executeOrderStatusCheck() {
+        super.executeCheck(bizId -> {
+            Aggregate<Order> orderAggregate = orderGateway.get(new OrderId(bizId));
+            return orderAggregate.getRoot();
+        });
     }
 
     public OrderSubmitRespDTO execute(OrderSubmitCmd cmd) {
@@ -95,7 +82,7 @@ public class OrderSubmitCmdExe extends TccTemplateService<Long, Order> {
 
 
     @Override
-    protected void tryPhase(Order order) throws CouponInvalidException {
+    protected void tryPhase(Order order)  {
         Set<InventoryDedcutionCmd.Item> itemSet = order.getOrderItems().stream().map(item ->
                 new InventoryDedcutionCmd.Item(item.getGoodsId(), item.getAmount())
         ).collect(Collectors.toSet());
