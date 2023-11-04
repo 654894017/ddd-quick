@@ -1,5 +1,6 @@
 package com.damon.demo.application.order.command;
 
+import cn.hutool.core.thread.NamedThreadFactory;
 import com.damon.demo.application.order.OrderAssembler;
 import com.damon.demo.client.api.order.dto.OrderSubmitCmd;
 import com.damon.demo.client.api.order.dto.OrderSubmitRespDTO;
@@ -21,11 +22,15 @@ import com.damon.object_trace.AggregateFactory;
 import com.damon.tcc.TccConfig;
 import com.damon.tcc.TccTemplateService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Set;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 @Slf4j
+@Service
 public class OrderSubmitCmdExe extends TccTemplateService<Long, Order> {
     private final OrderAssembler orderAssembler;
     private final IInventoryGateway inventoryGateway;
@@ -34,7 +39,9 @@ public class OrderSubmitCmdExe extends TccTemplateService<Long, Order> {
     private final IShoppingCartGateway shoppingCartGateway;
     private final OrderMoneyCalcuateDomainService orderMoneyCalcuateDomainService;
     private final IOrderGateway orderGateway;
+    private final ExecutorService executorService;
 
+    @Autowired
     public OrderSubmitCmdExe(TccConfig tccConfig,
                              OrderAssembler orderAssembler,
                              IInventoryGateway inventoryGateway,
@@ -51,6 +58,10 @@ public class OrderSubmitCmdExe extends TccTemplateService<Long, Order> {
         this.shoppingCartGateway = shoppingCartGateway;
         this.orderMoneyCalcuateDomainService = orderMoneyCalcuateDomainService;
         this.orderGateway = orderGateway;
+        this.executorService = new ThreadPoolExecutor(20, 100, 120L, TimeUnit.SECONDS,
+                new LinkedBlockingQueue(512), new NamedThreadFactory("order-aync-pool-", false),
+                new ThreadPoolExecutor.CallerRunsPolicy()
+        );
     }
 
     public void executeOrderStatusCheck() {
@@ -82,20 +93,27 @@ public class OrderSubmitCmdExe extends TccTemplateService<Long, Order> {
 
 
     @Override
-    protected void tryPhase(Order order)  {
-        Set<InventoryDedcutionCmd.Item> itemSet = order.getOrderItems().stream().map(item ->
-                new InventoryDedcutionCmd.Item(item.getGoodsId(), item.getAmount())
-        ).collect(Collectors.toSet());
-
-        inventoryGateway.tryDeduction(new InventoryDedcutionCmd(order.getId(), itemSet));
-
-        if (order.canDedcutionPoints()) {
-            pointGateway.tryDeductionPoints(order.getId(), order.getDeductionPoints(), order.getOrderSubmitUserId());
-        }
-        if (order.canDedcutionCoupon()) {
-            couponGateway.tryDeductionCoupon(order.getId(), order.getCouponId(), order.getOrderSubmitUserId());
-        }
-        order.submit(orderMoneyCalcuateDomainService);
+    protected void tryPhase(Order order) {
+        CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> {
+            Set<InventoryDedcutionCmd.Item> itemSet = order.getOrderItems().stream().map(item ->
+                    new InventoryDedcutionCmd.Item(item.getGoodsId(), item.getAmount())
+            ).collect(Collectors.toSet());
+            inventoryGateway.tryDeduction(new InventoryDedcutionCmd(order.getId(), itemSet));
+        }, executorService);
+        CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
+            if (order.canDedcutionPoints()) {
+                pointGateway.tryDeductionPoints(order.getId(), order.getDeductionPoints(), order.getOrderSubmitUserId());
+            }
+        }, executorService);
+        CompletableFuture<Void> future3 = CompletableFuture.runAsync(() -> {
+            if (order.canDedcutionCoupon()) {
+                couponGateway.tryDeductionCoupon(order.getId(), order.getCouponId(), order.getOrderSubmitUserId());
+            }
+        }, executorService);
+        CompletableFuture<Void> future4 = CompletableFuture.runAsync(() -> {
+            order.submit(orderMoneyCalcuateDomainService);
+        }, executorService);
+        CompletableFuture.allOf(future1, future2, future3, future4).join();
     }
 
     @Override
@@ -110,6 +128,7 @@ public class OrderSubmitCmdExe extends TccTemplateService<Long, Order> {
         inventoryGateway.commitDeduction(order.getId());
         pointGateway.commitDeductionPoints(order.getId());
         couponGateway.commitDeductionCoupon(order.getId());
+
     }
 
     @Override

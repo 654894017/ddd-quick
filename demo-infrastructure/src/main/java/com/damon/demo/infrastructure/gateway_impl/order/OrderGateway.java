@@ -26,6 +26,7 @@ public class OrderGateway implements IOrderGateway {
 
     private final OrderMapper orderMapper;
     private final OrderItemMapper orderItemMapper;
+
     @Override
     public Aggregate<Order> get(OrderId orderId) {
         OrderPO orderPO = orderMapper.selectById(orderId.getId());

@@ -49,9 +49,9 @@ public class OrderFactory {
 
     public static Aggregate<Order> convert(@NonNull OrderPO orderPO, @NonNull List<OrderItemPO> orderItemPOS) {
         Order order = new Order();
-        List<OrderItem> orderItems = orderItemPOS.stream().map(item -> {
-            return new OrderItem(item.getId(), item.getOrderId(), item.getGoodsId(), item.getGoodsName(), item.getAmount(), item.getPrice());
-        }).collect(Collectors.toList());
+        List<OrderItem> orderItems = orderItemPOS.stream().map(item ->
+                new OrderItem(item.getId(), item.getOrderId(), item.getGoodsId(), item.getGoodsName(), item.getAmount(), item.getPrice())
+        ).collect(Collectors.toList());
         order.setId(orderPO.getId());
         order.setConsignee(new Consignee(orderPO.getConsigneeName(), orderPO.getConsigneeShippingAddress(), orderPO.getConsigneeMobile()));
         order.setVersion(orderPO.getVersion());
