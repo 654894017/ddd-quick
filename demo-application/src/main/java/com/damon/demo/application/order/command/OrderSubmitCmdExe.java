@@ -17,7 +17,6 @@ import com.damon.demo.domain.order.IOrderGateway;
 import com.damon.demo.domain.order.OrderMoneyCalcuateDomainService;
 import com.damon.demo.domain.order.entity.Order;
 import com.damon.demo.domain.order.entity.OrderId;
-import com.damon.object_trace.Aggregate;
 import com.damon.object_trace.AggregateFactory;
 import com.damon.tcc.TccConfig;
 import com.damon.tcc.TccTemplateService;
@@ -64,11 +63,12 @@ public class OrderSubmitCmdExe extends TccTemplateService<Long, Order> {
         );
     }
 
-    public void executeOrderStatusCheck() {
-        super.executeCheck(bizId -> {
-            Aggregate<Order> orderAggregate = orderGateway.get(new OrderId(bizId));
-            return orderAggregate.getRoot();
-        });
+    public void executeFailedCheck() {
+       super.executeFailedCheck();
+    }
+
+    public void executeDeadCheck() {
+        super.executeDeadCheck();
     }
 
     public OrderSubmitRespDTO execute(OrderSubmitCmd cmd) {
@@ -91,6 +91,11 @@ public class OrderSubmitCmdExe extends TccTemplateService<Long, Order> {
         }
     }
 
+
+    @Override
+    protected Order callbackParameter(Long bizId) {
+        return orderGateway.get(new OrderId(bizId)).getRoot();
+    }
 
     @Override
     protected void tryPhase(Order order) {
