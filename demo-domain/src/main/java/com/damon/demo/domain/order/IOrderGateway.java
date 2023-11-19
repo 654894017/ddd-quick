@@ -15,4 +15,5 @@ public interface IOrderGateway {
      */
     void save(Aggregate<Order> orderAggregate);
 
+    void create(Aggregate<Order> orderAggregate);
 }

@@ -1,4 +1,4 @@
-package com.damon.demo.common;
+package com.damon.demo.common.event_bus;
 
 public class EventBus {
     private static com.google.common.eventbus.EventBus eventBus;

@@ -22,7 +22,7 @@ public class OrderFactory {
                 .consigneeMobile(order.getConsignee().getMobile())
                 .consigneeName(order.getConsignee().getName())
                 .totalMoney(order.getTotalMoney())
-                .delete(order.getDelete())
+                .isDelete(order.getDelete())
                 .status(order.getStatus())
                 .version(order.getVersion())
                 .updateTime(order.getUpdateTime())
@@ -35,14 +35,14 @@ public class OrderFactory {
         return orderPO;
     }
 
-    public static List<OrderItemPO> convert(@NonNull List<OrderItem> itemList) {
+    public static List<OrderItemPO> convertPO(@NonNull List<OrderItem> itemList) {
         return itemList.stream().map(item -> {
             return OrderItemPO.builder().orderId(item.getOrderId()).goodsName(item.getGoodsName()).goodsId(item.getGoodsId())
                     .id(item.getId()).price(item.getPrice()).amount(item.getAmount()).build();
         }).collect(Collectors.toList());
     }
 
-    public static OrderItemPO convert(@NonNull OrderItem item) {
+    public static OrderItemPO convertPO(@NonNull OrderItem item) {
         return OrderItemPO.builder().orderId(item.getOrderId()).goodsName(item.getGoodsName())
                 .id(item.getId()).price(item.getPrice()).amount(item.getAmount()).build();
     }
@@ -63,7 +63,7 @@ public class OrderFactory {
         order.setActualPayMoney(orderPO.getActualPayMoney());
         order.setTotalMoney(orderPO.getTotalMoney());
         order.setOrderSubmitUserId(orderPO.getOrderSubmitUserId());
-        order.setDelete(orderPO.getDelete());
+        order.setDelete(orderPO.getIsDelete());
         order.setOrderItems(orderItems);
         order.setSellerId(orderPO.getSellerId());
         return AggregateFactory.createAggregate(order);

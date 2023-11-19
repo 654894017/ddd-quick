@@ -5,16 +5,13 @@ import com.damon.demo.domain.gateway.coupon.CouponDTO;
 import com.damon.demo.domain.gateway.coupon.ICouponGateway;
 import com.damon.demo.domain.gateway.point.IPointGateway;
 import com.damon.demo.domain.order.entity.Order;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-@Service
-@RequiredArgsConstructor
+//@Service
+//@RequiredArgsConstructor
 public class OrderMoneyCalcuateDomainService {
 
-    private final IPointGateway pointGateway;
-
-    private final ICouponGateway couponGateway;
+    private IPointGateway pointGateway;
+    private ICouponGateway couponGateway;
 
     public Long calculatePayMoney(Order order) {
         Long pointsDeductionMoney = pointGateway.calculateDeductionMoney(order.getDeductionPoints(), order.getOrderSubmitUserId());

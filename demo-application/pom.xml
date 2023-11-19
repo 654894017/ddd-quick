@@ -16,10 +16,10 @@
             <groupId>com.damon</groupId>
             <artifactId>tcc</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.example</groupId>
-            <artifactId>demo-infrastructure</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.example</groupId>-->
+<!--            <artifactId>demo-infrastructure</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.example</groupId>
             <artifactId>demo-client</artifactId>

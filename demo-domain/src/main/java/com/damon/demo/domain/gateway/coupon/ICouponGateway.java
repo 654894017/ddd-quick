@@ -7,7 +7,7 @@ public interface ICouponGateway {
      * @param orderSubmitUserId
      * @throws CouponInvalidException
      */
-    void tryDeductionCoupon(Long orderId, Long couponIds, Long orderSubmitUserId);
+    CouponDTO tryDeductionCoupon(Long orderId, Long couponIds, Long orderSubmitUserId);
 
     void commitDeductionCoupon(Long orderId);
 

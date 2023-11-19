@@ -25,7 +25,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -38,8 +41,6 @@ public class OrderSubmitCmdExe extends TccTemplateService<Long, Order> {
     private final IShoppingCartGateway shoppingCartGateway;
     private final OrderMoneyCalcuateDomainService orderMoneyCalcuateDomainService;
     private final IOrderGateway orderGateway;
-    private final ExecutorService executorService;
-
     @Autowired
     public OrderSubmitCmdExe(TccConfig tccConfig,
                              OrderAssembler orderAssembler,
@@ -57,18 +58,14 @@ public class OrderSubmitCmdExe extends TccTemplateService<Long, Order> {
         this.shoppingCartGateway = shoppingCartGateway;
         this.orderMoneyCalcuateDomainService = orderMoneyCalcuateDomainService;
         this.orderGateway = orderGateway;
-        this.executorService = new ThreadPoolExecutor(20, 100, 120L, TimeUnit.SECONDS,
-                new LinkedBlockingQueue(512), new NamedThreadFactory("order-aync-pool-", false),
-                new ThreadPoolExecutor.CallerRunsPolicy()
-        );
     }
 
     public void executeFailedCheck() {
-       super.executeFailedCheck();
+        super.executeFailedLogCheck();
     }
 
     public void executeDeadCheck() {
-        super.executeDeadCheck();
+        super.executeDeadLogCheck();
     }
 
     public OrderSubmitRespDTO execute(OrderSubmitCmd cmd) {
@@ -91,7 +88,6 @@ public class OrderSubmitCmdExe extends TccTemplateService<Long, Order> {
         }
     }
 
-
     @Override
     protected Order callbackParameter(Long bizId) {
         return orderGateway.get(new OrderId(bizId)).getRoot();
@@ -99,31 +95,22 @@ public class OrderSubmitCmdExe extends TccTemplateService<Long, Order> {
 
     @Override
     protected void tryPhase(Order order) {
-        CompletableFuture<Void> future1 = CompletableFuture.runAsync(() -> {
-            Set<InventoryDedcutionCmd.Item> itemSet = order.getOrderItems().stream().map(item ->
-                    new InventoryDedcutionCmd.Item(item.getGoodsId(), item.getAmount())
-            ).collect(Collectors.toSet());
-            inventoryGateway.tryDeduction(new InventoryDedcutionCmd(order.getId(), itemSet));
-        }, executorService);
-        CompletableFuture<Void> future2 = CompletableFuture.runAsync(() -> {
-            if (order.canDedcutionPoints()) {
-                pointGateway.tryDeductionPoints(order.getId(), order.getDeductionPoints(), order.getOrderSubmitUserId());
-            }
-        }, executorService);
-        CompletableFuture<Void> future3 = CompletableFuture.runAsync(() -> {
-            if (order.canDedcutionCoupon()) {
-                couponGateway.tryDeductionCoupon(order.getId(), order.getCouponId(), order.getOrderSubmitUserId());
-            }
-        }, executorService);
-        CompletableFuture<Void> future4 = CompletableFuture.runAsync(() -> {
-            order.submit(orderMoneyCalcuateDomainService);
-        }, executorService);
-        CompletableFuture.allOf(future1, future2, future3, future4).join();
+        Set<InventoryDedcutionCmd.Item> itemSet = order.getOrderItems().stream().map(item ->
+                new InventoryDedcutionCmd.Item(item.getGoodsId(), item.getAmount())
+        ).collect(Collectors.toSet());
+        inventoryGateway.tryDeduction(new InventoryDedcutionCmd(order.getId(), itemSet));
+        if (order.canDedcutionPoints()) {
+            pointGateway.tryDeductionPoints(order.getId(), order.getDeductionPoints(), order.getOrderSubmitUserId());
+        }
+        if (order.canDedcutionCoupon()) {
+            couponGateway.tryDeductionCoupon(order.getId(), order.getCouponId(), order.getOrderSubmitUserId());
+        }
+        order.submit(orderMoneyCalcuateDomainService);
     }
 
     @Override
     protected Long executeLocalTransactionPhase(Order order) {
-        orderGateway.save(AggregateFactory.createAggregate(order));
+        orderGateway.create(AggregateFactory.createAggregate(order));
         return order.getId();
     }
 

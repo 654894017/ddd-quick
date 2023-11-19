@@ -1,0 +1,6 @@
+logging:
+  level:
+    org.mybatis: debug
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

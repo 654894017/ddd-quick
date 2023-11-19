@@ -1,12 +1,16 @@
 package com.damon.demo.infrastructure.gateway_impl.mapper.order;
 
 
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.damon.object_trace.Version;
 import lombok.Builder;
 import lombok.Data;
 
+
 @Data
 @Builder
-public class OrderPO {
+@TableName("demo_order")
+public class OrderPO implements Version {
 
     private int version;
     private Long id;
@@ -21,6 +25,6 @@ public class OrderPO {
     private Long couponId;
     private Long deductionPoints;
     private Long orderSubmitUserId;
-    private int delete;
+    private int isDelete;
     private Long sellerId;
 }
